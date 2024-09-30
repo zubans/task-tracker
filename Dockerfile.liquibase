@@ -1,0 +1,7 @@
+FROM liquibase/liquibase:latest
+
+COPY ./migrations /liquibase/changelog
+COPY ./liquibase.properties /liquibase/liquibase.properties
+
+ENTRYPOINT ["liquibase"]
+CMD ["update"]

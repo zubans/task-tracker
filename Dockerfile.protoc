@@ -1,0 +1,19 @@
+# Используем официальный образ golang для сборки protoc-gen-go и protoc-gen-go-grpc
+FROM golang:1.21
+
+# Устанавливаем рабочую директорию
+WORKDIR /workspace
+
+# Устанавливаем protoc и плагины для Go
+RUN apt-get update && apt-get install -y protobuf-compiler
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+# Убедимся, что $GOPATH/bin включен в PATH
+ENV PATH="$PATH:$(go env GOPATH)/bin"
+
+# Копируем protobuf файлы
+COPY ./proto ./proto
+
+# Генерируем go код
+CMD ["protoc", "--proto_path=./proto", "--go_out=./proto", "--go-grpc_out=./proto", "proto/tasks.proto"]
